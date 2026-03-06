@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from utils import get_today
 
 
@@ -66,3 +67,51 @@ def get_today_progress(data):
     today = get_today()
     completed_today = data["completions"].get(today, [])
     return today, completed_today
+
+def get_streaks(data):
+    """Return current and longest streaks for each habit."""
+    streaks = {}
+    today = datetime.strptime(get_today(), "%Y-%m-%d").date()
+
+    for habit in data["habits"]:
+        completed_dates = []
+
+        for day, habits_completed in data["completions"].items():
+            if habit in habits_completed:
+                completed_date = datetime.strptime(day, "%Y-%m-%d").date()
+                completed_dates.append(completed_date)
+
+        completed_dates.sort()
+
+        if not completed_dates:
+            streaks[habit] = {"current": 0, "longest": 0}
+            continue
+
+        # Calculate longest streak
+        longest_streak = 1
+        current_run = 1
+
+        for i in range(1, len(completed_dates)):
+            if completed_dates[i] == completed_dates[i - 1] + timedelta(days=1):
+                current_run += 1
+            else:
+                current_run = 1
+
+            if current_run > longest_streak:
+                longest_streak = current_run
+
+        # Calculate current streak
+        completed_dates_set = set(completed_dates)
+        current_streak = 0
+        check_day = today
+
+        while check_day in completed_dates_set:
+            current_streak += 1
+            check_day -= timedelta(days=1)
+
+        streaks[habit] = {
+            "current": current_streak,
+            "longest": longest_streak
+        }
+
+    return streaks

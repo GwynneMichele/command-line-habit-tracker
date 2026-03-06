@@ -6,7 +6,8 @@ def show_menu():
     print("3. View Progress")
     print("4. Add Habit")
     print("5. Delete Habit")
-    print("6. Exit")
+    print("6. View Streaks")
+    print("7. Exit")
     print()
     return input("Choose an option: ").strip()
 
@@ -32,6 +33,22 @@ def show_today_progress(today, completed_today):
         print(f"\nTotal completed: {len(completed_today)}")
     else:
         print(f"\nNo habits marked as done for today ({today}).")
+
+
+def show_streaks(streak_data):
+    """Display current and longest streaks for each habit in aligned columns."""
+    if not streak_data:
+        print("\nNo streak data available.\n")
+        return
+
+    print("\nHabit Streaks:")
+    print(f"{'Habit':<15}{'Current':<10}{'Longest':<10}")
+    print("-" * 35)
+
+    for habit, streaks in streak_data.items():
+        print(f"{habit:<15}{streaks['current']:<10}{streaks['longest']:<10}")
+
+    print()
 
 
 def get_habit_choice(prompt):

@@ -2,11 +2,18 @@ from display import (
     show_menu,
     show_habits,
     show_today_progress,
+    show_streaks,
     get_habit_choice,
     get_new_habit_name,
 )
 from storage import load_data, save_data
-from tracker import add_habit, delete_habit, mark_habit_complete, get_today_progress
+from tracker import (
+    add_habit,
+    delete_habit,
+    mark_habit_complete,
+    get_today_progress,
+    get_streaks,
+)
 
 
 def main():
@@ -44,6 +51,10 @@ def main():
             save_data(data)
 
         elif choice == "6":
+            streak_data = get_streaks(data)
+            show_streaks(streak_data)
+
+        elif choice == "7":
             print("Goodbye!")
             break
 
