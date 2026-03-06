@@ -1,43 +1,33 @@
-from display import show_habits
 from utils import get_today
 
 
-def add_habit(data):
+def add_habit(data, new_habit):
     """Add a new habit if it does not already exist."""
-    new_habit = input("Enter the name of the new habit: ").strip()
+    new_habit = new_habit.strip()
 
     if not new_habit:
-        print("Habit name cannot be blank.")
-        return
+        return "Habit name cannot be blank."
 
     normalized_habits = [habit.lower() for habit in data["habits"]]
     if new_habit.lower() in normalized_habits:
-        print(f"'{new_habit}' is already being tracked.")
-        return
+        return f"'{new_habit}' is already being tracked."
 
     data["habits"].append(new_habit)
-    print(f"'{new_habit}' has been added.")
+    return f"'{new_habit}' has been added."
 
 
-def mark_habit_complete(data):
+def mark_habit_complete(data, habit_index):
     """Mark a selected habit as complete for today."""
     if not data["habits"]:
-        print("No habits available to mark. Add a habit first.")
-        return
+        return "No habits available to mark. Add a habit first."
 
-    show_habits(data["habits"])
-    choice = input("Select a habit to mark as done: ").strip()
+    if not isinstance(habit_index, int):
+        return "Invalid choice. Please enter a number."
 
-    if not choice.isdigit():
-        print("Invalid choice. Please enter a number.")
-        return
+    if not 0 <= habit_index < len(data["habits"]):
+        return "Invalid choice. Please try again."
 
-    choice_num = int(choice)
-    if not 1 <= choice_num <= len(data["habits"]):
-        print("Invalid choice. Please try again.")
-        return
-
-    habit = data["habits"][choice_num - 1]
+    habit = data["habits"][habit_index]
     today = get_today()
 
     if today not in data["completions"]:
@@ -45,34 +35,34 @@ def mark_habit_complete(data):
 
     if habit not in data["completions"][today]:
         data["completions"][today].append(habit)
-        print(f"{habit} marked as done for {today}.")
+        return f"{habit} marked as done for {today}."
     else:
-        print(f"{habit} is already marked as done for {today}.")
+        return f"{habit} is already marked as done for {today}."
 
 
-def delete_habit(data):
+def delete_habit(data, habit_index):
     """Delete a habit from the tracker and remove it from all completion records."""
     if not data["habits"]:
-        print("No habits available to delete.")
-        return
+        return "No habits available to delete."
 
-    show_habits(data["habits"])
-    choice = input("Select a habit to delete: ").strip()
+    if not isinstance(habit_index, int):
+        return "Invalid choice. Please enter a number."
 
-    if not choice.isdigit():
-        print("Invalid choice. Please enter a number.")
-        return
+    if not 0 <= habit_index < len(data["habits"]):
+        return "Invalid choice. Please try again."
 
-    choice_num = int(choice)
-    if not 1 <= choice_num <= len(data["habits"]):
-        print("Invalid choice. Please try again.")
-        return
-
-    habit = data["habits"][choice_num - 1]
+    habit = data["habits"][habit_index]
     data["habits"].remove(habit)
 
     for day in data["completions"]:
         if habit in data["completions"][day]:
             data["completions"][day].remove(habit)
 
-    print(f"{habit} has been deleted from tracked habits.")
+    return f"{habit} has been deleted from tracked habits."
+
+
+def get_today_progress(data):
+    """Return today's date and completed habits."""
+    today = get_today()
+    completed_today = data["completions"].get(today, [])
+    return today, completed_today

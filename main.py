@@ -1,6 +1,12 @@
-from display import show_menu, show_habits, view_today_progress
+from display import (
+    show_menu,
+    show_habits,
+    show_today_progress,
+    get_habit_choice,
+    get_new_habit_name,
+)
 from storage import load_data, save_data
-from tracker import add_habit, delete_habit, mark_habit_complete
+from tracker import add_habit, delete_habit, mark_habit_complete, get_today_progress
 
 
 def main():
@@ -14,18 +20,27 @@ def main():
             show_habits(data["habits"])
 
         elif choice == "2":
-            mark_habit_complete(data)
+            show_habits(data["habits"])
+            habit_index = get_habit_choice("Select a habit to mark as done: ")
+            message = mark_habit_complete(data, habit_index)
+            print(message)
             save_data(data)
 
         elif choice == "3":
-            view_today_progress(data)
+            today, completed_today = get_today_progress(data)
+            show_today_progress(today, completed_today)
 
         elif choice == "4":
-            add_habit(data)
+            new_habit = get_new_habit_name()
+            message = add_habit(data, new_habit)
+            print(message)
             save_data(data)
 
         elif choice == "5":
-            delete_habit(data)
+            show_habits(data["habits"])
+            habit_index = get_habit_choice("Select a habit to delete: ")
+            message = delete_habit(data, habit_index)
+            print(message)
             save_data(data)
 
         elif choice == "6":

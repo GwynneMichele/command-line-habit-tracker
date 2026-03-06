@@ -1,6 +1,3 @@
-from utils import get_today
-
-
 def show_menu():
     """Display the main menu and return the user's choice."""
     print("\nHabit Tracker")
@@ -26,11 +23,8 @@ def show_habits(habits):
     print()
 
 
-def view_today_progress(data):
+def show_today_progress(today, completed_today):
     """Display habits completed today."""
-    today = get_today()
-    completed_today = data["completions"].get(today, [])
-
     if completed_today:
         print(f"\nHabits completed today ({today}):")
         for habit in completed_today:
@@ -38,3 +32,18 @@ def view_today_progress(data):
         print(f"\nTotal completed: {len(completed_today)}")
     else:
         print(f"\nNo habits marked as done for today ({today}).")
+
+
+def get_habit_choice(prompt):
+    """Prompt the user for a habit number and return a zero-based index."""
+    choice = input(prompt).strip()
+
+    if not choice.isdigit():
+        return None
+
+    return int(choice) - 1
+
+
+def get_new_habit_name():
+    """Prompt the user for a new habit name."""
+    return input("Enter the name of the new habit: ").strip()
