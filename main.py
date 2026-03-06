@@ -1,8 +1,10 @@
 from display import (
+    show_title,
     show_menu,
     show_habits,
     show_today_progress,
     show_streaks,
+    show_message,
     get_habit_choice,
     get_new_habit_name,
 )
@@ -21,6 +23,7 @@ def main():
     data = load_data()
 
     while True:
+        show_title()
         choice = show_menu()
 
         if choice == "1":
@@ -28,9 +31,16 @@ def main():
 
         elif choice == "2":
             show_habits(data["habits"])
-            habit_index = get_habit_choice("Select a habit to mark as done: ")
+            habit_index = get_habit_choice("Select a habit to mark as done")
             message = mark_habit_complete(data, habit_index)
-            print(message)
+
+            if "marked as done" in message:
+                show_message(message, "success")
+            elif "already marked" in message:
+                show_message(message, "warning")
+            else:
+                show_message(message, "error")
+
             save_data(data)
 
         elif choice == "3":
@@ -40,14 +50,26 @@ def main():
         elif choice == "4":
             new_habit = get_new_habit_name()
             message = add_habit(data, new_habit)
-            print(message)
+
+            if "has been added" in message:
+                show_message(message, "success")
+            elif "already being tracked" in message:
+                show_message(message, "warning")
+            else:
+                show_message(message, "error")
+
             save_data(data)
 
         elif choice == "5":
             show_habits(data["habits"])
-            habit_index = get_habit_choice("Select a habit to delete: ")
+            habit_index = get_habit_choice("Select a habit to delete")
             message = delete_habit(data, habit_index)
-            print(message)
+
+            if "has been deleted" in message:
+                show_message(message, "success")
+            else:
+                show_message(message, "error")
+
             save_data(data)
 
         elif choice == "6":
@@ -55,11 +77,11 @@ def main():
             show_streaks(streak_data)
 
         elif choice == "7":
-            print("Goodbye!")
+            show_message("Goodbye!", "info")
             break
 
         else:
-            print("Invalid option. Please try again.")
+            show_message("Invalid option. Please try again.", "error")
 
 
 if __name__ == "__main__":
